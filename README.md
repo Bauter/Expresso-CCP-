@@ -1,6 +1,8 @@
-# Expresso
+# Expresso (Codecademy CornerStone Project )
 
 ## Project Overview
+
+working with Node.js, Express, Sqlite3
 
 In this capstone project, you will build all of the routing and database logic for an internal tool for a coffee shop called Expresso.
 
