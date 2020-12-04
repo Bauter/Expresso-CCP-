@@ -47,7 +47,7 @@ employeeRouter.get('/', (req, res, next) => {
         if(error) {
             next(error);
         } else {
-            res.status(200).json({employee: employee});
+            return res.status(200).json({employee: employee});
         };
     });
 });

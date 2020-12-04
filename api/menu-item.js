@@ -41,11 +41,11 @@ menuItemRouter.get('/', (req, res, next) => {
         $menuItemId: req.params.menuItemId
     };
 
-    db.run(sql, values, (error, menuItem) => {
+    db.run(sql, values, (error, menuItems) => {
         if(error) {
             next(error);
         } else {
-            return res.status(200).json({menuItem: menuItem});
+            return res.status(200).json({menuItems: menuItems});
         };
     });
 });

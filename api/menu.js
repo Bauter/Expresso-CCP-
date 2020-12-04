@@ -43,11 +43,11 @@ menuRouter.use('/:menuId/menu-items', menuItemRouter);
 ''''''''''''*/
 
 menuRouter.get('/', (req, res, next) => {
-    db.all(`SELECT * FROM Menu`, (error, menu) => {
+    db.all(`SELECT * FROM Menu`, (error, menus) => {
         if(error) {
             next(error);
         } else {
-            return res.status(200).json({menu: menu});
+            return res.status(200).json({menus: menus});
         };
     });
 });
@@ -59,7 +59,7 @@ menuRouter.post('/', (req, res, next) => {
 
     // Define and check that all required fields are present, if not, return 400 status code
 
-    const title = req.body.employee.title;
+    const title = req.body.menu.title;
 
     if(!title) {
         return res.sendStatus(400);
@@ -105,7 +105,7 @@ menuRouter.put('/:menuId', (req, res, next) => {
 
     // Define and check that all required fields are present, if not, return 400 status code
 
-    const title = req.body.employee.title;
+    const title = req.body.menu.title;
 
     if(!title) {
         return res.sendStatus(400);

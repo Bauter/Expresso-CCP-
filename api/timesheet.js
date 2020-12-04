@@ -8,7 +8,7 @@ const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite'
 /* Params
 '''''''''*/
 
-timesheetRouter.params('timesheetId', (req, res, next, timesheetId) => {
+timesheetRouter.param('timesheetId', (req, res, next, timesheetId) => {
     const sql = `SELECT * FROM Timesheet WHERE Timesheet.id = $timesheetId`;
     const values = {
         $timesheetId: timesheetId
@@ -41,11 +41,11 @@ timesheetRouter.get('/', (req, res, next) => {
         $employeeId: req.params.employeeId
     };
 
-    db.run(sql, values, (error, timesheet) => {
+    db.run(sql, values, (error, timesheets) => {
         if (error) {
             next(error);
         } else {
-            return res.status(200).json({timesheet: timesheet});
+             res.status(200).json({timesheets: timesheets});
         };
     });
 });
@@ -142,7 +142,7 @@ timesheetRouter.put('/:timesheetId', (req, res, next) => {
                 return res. sendStatus(400);
             };
 
-            const sql = `UPDATE Timesheet SET hours = $hours, rate = $rate, date = $date employee_id = $employeeId WHERE Timesheet.id = $timesheetId`;
+            const sql = `UPDATE Timesheet SET hours = $hours, rate = $rate, date = $date, employee_id = $employeeId WHERE Timesheet.id = $timesheetId`;
             const values = {
                 $hours: hours,
                 $rate: rate,
@@ -174,7 +174,7 @@ timesheetRouter.delete('/:timesheetId', (req, res, next) => {
 
     const sql = `DELETE FROM Timesheet WHERE Timesheet.id = $timesheetId`;
     const values = {
-        $timesheetId: timesheetId
+        $timesheetId: req.params.timesheetId
     };
 
     // Run delete query
