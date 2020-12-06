@@ -79,7 +79,7 @@ menuRouter.post('/', (req, res, next) => {
             next(error);
         } else {
             db.get(`SELECT * FROM Menu WHERE Menu.id = ${this.lastID}`, (error, menu) => {
-                return res.status(201).json({menu: menu});
+                res.status(201).json({menu: menu});
             });
         };
     });
@@ -126,7 +126,7 @@ menuRouter.put('/:menuId', (req, res, next) => {
             next(error);
         } else {
             db.get(`SELECT * FROM Menu WHERE Menu.id = ${req.params.menuId}`, (error, menu) => {
-                return res.status(200).json({menu: menu});
+                 res.status(200).json({menu: menu});
             });
         };
     });

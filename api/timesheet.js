@@ -44,6 +44,9 @@ timesheetRouter.get('/', (req, res, next) => {
     db.run(sql, values, (error, timesheets) => {
         if (error) {
             next(error);
+        } else if (!timesheets) {
+            timesheets = [];
+            res.status(200).json({timesheets: timesheets});    
         } else {
              res.status(200).json({timesheets: timesheets});
         };
@@ -61,7 +64,7 @@ timesheetRouter.post('/', (req, res, next) => {
     const hours = req.body.timesheet.hours;
     const rate = req.body.timesheet.rate;
     const date = req.body.timesheet.date;
-    const employeeId = req.body.timesheet.employeeId;
+    const employeeId = req.params.employeeId;
 
     // db query and values to find employee
 
@@ -98,7 +101,7 @@ timesheetRouter.post('/', (req, res, next) => {
                     next(error);
                 } else {
                     db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${this.lastID}`, (error, timesheet) => {
-                        return res.status(201).json({timesheet: timesheet});
+                        res.status(201).json({timesheet: timesheet});
                     });
                 };
             });
@@ -122,7 +125,7 @@ timesheetRouter.put('/:timesheetId', (req, res, next) => {
     const hours = req.body.timesheet.hours;
     const rate = req.body.timesheet.rate;
     const date = req.body.timesheet.date;
-    const employeeId = req.body.timesheet.employeeId;
+    const employeeId = req.params.employeeId;
 
     // db query and values to find employee
 

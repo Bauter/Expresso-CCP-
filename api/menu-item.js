@@ -36,16 +36,19 @@ menuItemRouter.param('menuItemId', (req, res, next, menuItemId) => {
 
 menuItemRouter.get('/', (req, res, next) => {
 
-    const sql = `SELECT * FROM MenuItem WHERE MenuItem.id = $menuItemId`;
+    const sql = `SELECT * FROM MenuItem WHERE MenuItem.menu_id = $menuId`;
     const values = {
-        $menuItemId: req.params.menuItemId
+        $menuItemId: req.params.menuId
     };
 
     db.run(sql, values, (error, menuItems) => {
         if(error) {
             next(error);
+        } else if (!menuItems) {
+            menuItems = [];
+            res.status(200).json({menuItems: menuItems});
         } else {
-            return res.status(200).json({menuItems: menuItems});
+            res.status(200).json({menuItems: menuItems});
         };
     });
 });
@@ -60,7 +63,7 @@ menuItemRouter.post('/', (req, res, next) => {
     const description = req.body.menuItem.description;
     const inventory = req.body.menuItem.inventory;
     const price = req.body.menuItem.price;
-    const menuId = req.body.menuItem.menuId; /// params or body????
+    const menuId = req.params.menuId; /// params or body????
 
     const menuSql = `SELECT * FROM Menu WHERE Menu.id = $menuId`;
     const menuValues = {
@@ -90,7 +93,7 @@ menuItemRouter.post('/', (req, res, next) => {
                     next(error);
                 } else {
                     db.get(`SELECT * FROM MenuItem WHERE MenuItem.id = ${this.lastID}`, (error, menuItem) => {
-                        return res.status(201).json({menuItem: menuItem});
+                         res.status(201).json({menuItem: menuItem});
                     });
                 };
             });
@@ -113,7 +116,7 @@ menuItemRouter.put('/:menuItemId', (req, res, next) => {
     const description = req.body.menuItem.description;
     const inventory = req.body.menuItem.inventory;
     const price = req.body.menuItem.price;
-    const menuId = req.body.menuItem.menuId; /// params or body????
+    const menuId = req.params.menuId; /// params or body????
 
     const menuSql = `SELECT * FROM Menu WHERE Menu.id = $menuId`;
     const menuValues = {
@@ -144,7 +147,7 @@ menuItemRouter.put('/:menuItemId', (req, res, next) => {
                     next(error);
                 } else {
                     db.get(`SELECT * FROM MenuItem WHERE MenuItem.id = ${req.params.menuItemId}`, (error, menuItem) => {
-                        return res.status(200).json({menuItem: menuItem});
+                         res.status(200).json({menuItem: menuItem});
                     });
                 };
             });

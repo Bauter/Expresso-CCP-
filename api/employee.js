@@ -43,11 +43,11 @@ employeeRouter.use('/:employeeId/timesheets', timesheetRouter);
 ''''''''''''*/
 
 employeeRouter.get('/', (req, res, next) => {
-    db.all(`SELECT * FROM Employee WHERE Employee.is_current_employee = 1`, (error, employee) => {
+    db.all(`SELECT * FROM Employee WHERE Employee.is_current_employee = 1`, (error, employees) => {
         if(error) {
             next(error);
         } else {
-            return res.status(200).json({employee: employee});
+             res.status(200).json({employees: employees});
         };
     });
 });
@@ -87,7 +87,7 @@ employeeRouter.post('/', (req, res, next) => {
             next(error)
         } else {
             db.get(`SELECT * FROM Employee WHERE Employee.id = ${this.lastID}`, (error, employee) => {
-                return res.status(201).json({employee: employee});
+                 res.status(201).json({employee: employee});
             });
         };
     });
@@ -138,7 +138,7 @@ employeeRouter.put('/:employeeId', (req, res, next) => {
             next(error);
         } else {
             db.get(`SELECT * FROM Employee WHERE Employee.id = ${req.params.employeeId}`, (error, employee) => {
-                return res.status(200).json({employee: employee});
+                 res.status(200).json({employee: employee});
             });
         };
     });
@@ -163,7 +163,7 @@ employeeRouter.delete('/:employeeId', (req, res, next) => {
             next(error);
         } else {
             db.get(`SELECT * FROM Employee WHERE Employee.id = ${req.params.employeeId}`, (error, employee) => {
-                return res.status(200).json({employee: employee});
+                 res.status(200).json({employee: employee});
             });
         };
     });
