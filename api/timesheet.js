@@ -41,14 +41,14 @@ timesheetRouter.get('/', (req, res, next) => {
         $employeeId: req.params.employeeId
     };
 
-    db.run(sql, values, (error, timesheets) => {
+    db.all(sql, values, (error, timesheets) => {
         if (error) {
             next(error);
         } else if (!timesheets) {
             timesheets = [];
             res.status(200).json({timesheets: timesheets});    
         } else {
-             res.status(200).json({timesheets: timesheets});
+            return res.status(200).json({timesheets: timesheets});
         };
     });
 });
@@ -66,44 +66,28 @@ timesheetRouter.post('/', (req, res, next) => {
     const date = req.body.timesheet.date;
     const employeeId = req.params.employeeId;
 
-    // db query and values to find employee
+    if (!hours || !rate || date ) {
+        return res. sendStatus(400);
+    };
 
-    const employeeSql = `SELECT * FROM Employee WHERE Employee.id = $employeeId`;
-    const employeeValues = {
+    // Define query and values
+
+    const sql = `INSERT INTO Timesheet(hours, rate, date, employee_id) VALUES($hours, $rate, $date, $employeeId)`;
+    const values = {
+        $hours: hours,
+        $rate: rate,
+        $date: date,
         $employeeId: employeeId
     };
 
-    // Run the get query
+    // Run the create db query, get the updated response with "this.lastID" and return
 
-    db.get(employeeSql, employeeValues, (error, employee) => {
+    db.run(sql, values, function(error) {
         if(error) {
             next(error);
         } else {
-
-            if (!hours || !rate || date || !employee) {
-                return res. sendStatus(400);
-            };
-
-            // Define query and values
-
-            const sql = `INSERT INTO Timesheet(hours, rate, date, employee_id) VALUES($hours, $rate, $date, $employeeId)`;
-            const values = {
-                $hours: hours,
-                $rate: rate,
-                $date: date,
-                $employeeId: employeeId
-            };
-
-            // Run the create db query, get the updated response with "this.lastID" and return
-
-            db.run(sql, values, function(error) {
-                if(error) {
-                    next(error);
-                } else {
-                    db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${this.lastID}`, (error, timesheet) => {
-                        res.status(201).json({timesheet: timesheet});
-                    });
-                };
+            db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${this.lastID}`, (error, timesheet) => {
+                res.status(201).json({timesheet: timesheet});
             });
         };
     });
@@ -129,39 +113,25 @@ timesheetRouter.put('/:timesheetId', (req, res, next) => {
 
     // db query and values to find employee
 
-    const employeeSql = `SELECT * FROM Employee WHERE Employee.id = $employeeId`;
-    const employeeValues = {
-        $employeeId: employeeId
+    if (!hours || !rate || date || !employee) {
+        return res. sendStatus(400);
     };
 
-    // Run the get query
+    const sql = `UPDATE Timesheet SET hours = $hours, rate = $rate, date = $date, employee_id = $employeeId WHERE Timesheet.id = $timesheetId`;
+    const values = {
+        $hours: hours,
+        $rate: rate,
+        $date: date,
+        $employeeId: employeeId,
+        $timesheetId: req.params.timesheetId
+    };
 
-    db.get(employeeSql, employeeValues, (error, employee) => {
+    db.run(sql, values, (error) => {
         if(error) {
             next(error);
         } else {
-
-            if (!hours || !rate || date || !employee) {
-                return res. sendStatus(400);
-            };
-
-            const sql = `UPDATE Timesheet SET hours = $hours, rate = $rate, date = $date, employee_id = $employeeId WHERE Timesheet.id = $timesheetId`;
-            const values = {
-                $hours: hours,
-                $rate: rate,
-                $date: date,
-                $employeeId: employeeId,
-                $timesheetId: req.params.timesheetId
-            };
-
-            db.run(sql, values, (error) => {
-                if(error) {
-                    next(error);
-                } else {
-                    db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${req.params.timesheetId}`, (error, timesheet) => {
-                        return res.status(200).json({timesheet: timesheet});
-                    });
-                };
+            db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${req.params.timesheetId}`, (error, timesheet) => {
+                return res.status(200).json({timesheet: timesheet});
             });
         };
     });

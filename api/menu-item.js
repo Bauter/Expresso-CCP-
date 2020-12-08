@@ -14,7 +14,7 @@ menuItemRouter.param('menuItemId', (req, res, next, menuItemId) => {
         $menuItemId: menuItemId
     };
 
-    db.run(sql, values, (error, menuItem) => {
+    db.get(sql, values, (error, menuItem) => {
         if(error) {
             next(error);
         } else if (menuItem) {
@@ -41,7 +41,7 @@ menuItemRouter.get('/', (req, res, next) => {
         $menuItemId: req.params.menuId
     };
 
-    db.run(sql, values, (error, menuItems) => {
+    db.all(sql, values, (error, menuItems) => {
         if(error) {
             next(error);
         } else if (!menuItems) {
@@ -75,7 +75,7 @@ menuItemRouter.post('/', (req, res, next) => {
             next(error);
         } else {
 
-            if(!name || !description || !inventory || !price || !menu) {
+            if(!name || !inventory || !price || !menu) {
                 return res.sendStatus(400);
             };
 
@@ -128,7 +128,7 @@ menuItemRouter.put('/:menuItemId', (req, res, next) => {
             next(error);
         } else {
         
-            if(!name || !description || !inventory || !price || !menu) {
+            if(!name || !inventory || !price || !menu) {
                 return res.sendStatus(400);
             };
 
