@@ -1,5 +1,5 @@
 const express = require('express');
-const menuRouter = express.Router({mergeParams: true});
+const menuRouter = express.Router();
 const menuItemRouter = require('./menu-item.js');
 
 const sqlite3 = require('sqlite3');
@@ -34,11 +34,6 @@ menuRouter.param('menuId', (req, res, next, menuId) => {
 menuRouter.use('/:menuId/menu-items', menuItemRouter);
 
 
-//=====================================
-// '/menus' ('/') path
-//=====================================
-
-
 /* GET Route
 ''''''''''''*/
 
@@ -51,6 +46,14 @@ menuRouter.get('/', (req, res, next) => {
         };
     });
 });
+
+/* GET Route
+''''''''''''*/
+
+menuRouter.get('/:menuId', (req, res, next) => {
+    res.status(200).json({menu: req.menu});
+});
+
 
 /* POST Route
 '''''''''''''*/
@@ -83,18 +86,6 @@ menuRouter.post('/', (req, res, next) => {
             });
         };
     });
-});
-
-//=====================================
-// '/menus/:menuId' ('/:menusId') path
-//=====================================
-
-
-/* GET Route
-''''''''''''*/
-
-menuRouter.get('/:menuId', (req, res, next) => {
-    res.status(200).json({menu: req.menu});
 });
 
 

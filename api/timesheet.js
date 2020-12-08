@@ -1,5 +1,5 @@
 const express = require('express');
-const timesheetRouter = express.Router();
+const timesheetRouter = express.Router({mergeParams: true});
 
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
@@ -44,9 +44,6 @@ timesheetRouter.get('/', (req, res, next) => {
     db.all(sql, values, (error, timesheets) => {
         if (error) {
             next(error);
-        } else if (!timesheets) {
-            timesheets = [];
-            res.status(200).json({timesheets: timesheets});    
         } else {
             return res.status(200).json({timesheets: timesheets});
         };
@@ -66,7 +63,7 @@ timesheetRouter.post('/', (req, res, next) => {
     const date = req.body.timesheet.date;
     const employeeId = req.params.employeeId;
 
-    if (!hours || !rate || date ) {
+    if (!hours || !rate || !date ) {
         return res. sendStatus(400);
     };
 
@@ -113,7 +110,7 @@ timesheetRouter.put('/:timesheetId', (req, res, next) => {
 
     // db query and values to find employee
 
-    if (!hours || !rate || date || !employee) {
+    if (!hours || !rate || !date ) {
         return res. sendStatus(400);
     };
 
@@ -131,7 +128,7 @@ timesheetRouter.put('/:timesheetId', (req, res, next) => {
             next(error);
         } else {
             db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = ${req.params.timesheetId}`, (error, timesheet) => {
-                return res.status(200).json({timesheet: timesheet});
+                res.status(200).json({timesheet: timesheet});
             });
         };
     });

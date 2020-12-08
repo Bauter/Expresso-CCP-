@@ -1,5 +1,5 @@
 const express = require('express');
-const employeeRouter = express.Router({mergeParams: true});
+const employeeRouter = express.Router();
 const timesheetRouter = require('./timesheet.js');
 
 const sqlite3 = require('sqlite3');
@@ -8,7 +8,6 @@ const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite'
 
 /* Params
 '''''''''*/
-
 
 employeeRouter.param('employeeId', (req, res, next, employeeId) => {
     const sql = `SELECT * FROM Employee WHERE Employee.id = $employeeId`;
@@ -34,10 +33,6 @@ employeeRouter.param('employeeId', (req, res, next, employeeId) => {
 
 employeeRouter.use('/:employeeId/timesheets', timesheetRouter);
 
-//==================================
-// '/employees' ('/') path
-//==================================
-
 
 /* GET Route
 ''''''''''''*/
@@ -50,6 +45,12 @@ employeeRouter.get('/', (req, res, next) => {
              res.status(200).json({employees: employees});
         };
     });
+});
+
+/* GET Route
+''''''''''''*/
+employeeRouter.get('/:employeeId', (req, res, next) => {
+    res.status(200).json({employee: req.employee});
 });
 
 
@@ -91,17 +92,6 @@ employeeRouter.post('/', (req, res, next) => {
             });
         };
     });
-});
-
-//===================================
-// '/employees/:employeeId' ('/:employeeId') path
-//===================================
-
-
-/* GET Route
-''''''''''''*/
-employeeRouter.get('/:employeeId', (req, res, next) => {
-    res.status(200).json({employee : req.employee});
 });
 
 
